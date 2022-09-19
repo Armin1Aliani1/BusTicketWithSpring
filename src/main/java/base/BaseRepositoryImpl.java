@@ -1,57 +1,43 @@
 package base;
 
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 public abstract class BaseRepositoryImpl<E extends BaseEntity> implements BaseRepository<E> {
-    public BaseRepositoryImpl(){
-        template = null;
-    }
-    protected final EntityManager template;
+    org.springframework.orm.hibernate3.HibernateTemplate template;
 
-    @Override
-    public void save(E e) {
-        template.persist(e);
+    public BaseRepositoryImpl(org.springframework.orm.hibernate3.HibernateTemplate hibernateTemplate) {
+        this.template = template;
     }
 
     @Override
-    public E update(E e) {
-        return template.merge(e);
+    public int save(E e) {
+        return (int) template.save(e);
+    }
+
+    @Override
+    public void update(E e) {
+        template.update(e);
     }
 
     @Override
     public void delete(E e) {
-        template.remove(e);
+        template.delete(e);
     }
 
     @Override
     public void deleteById(int id) {
-        template.createQuery("delete from " + getEntityClass().getSimpleName() + " e where e.id =: id", getEntityClass())
-                .setParameter("id", id).executeUpdate();
+
     }
 
     @Override
     public E findById(int id) {
-        return template.find(getEntityClass(), id);
+        return (E) template.get(getEntityClass(), id);
     }
 
     @Override
     public List<E> findAll() {
-        return template.createQuery("from " + getEntityClass().getSimpleName(), getEntityClass()).getResultList();
+        return template.loadAll(getEntityClass());
     }
 
-    @Override
-    public void beginTransAction() {
-        if(!template.getTransaction().isActive()){
-            template.getTransaction().begin();
-        }
-    }
-
-    @Override
-    public void commitTransAction() {
-        if(template.getTransaction().isActive()){
-            template.getTransaction().commit();
-        }
-    }
 }

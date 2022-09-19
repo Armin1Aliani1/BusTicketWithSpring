@@ -14,6 +14,10 @@ public class HomePage {
         Passenger passenger = new Passenger();
         model.addAttribute("passenger", passenger);
         return "home-page-view";
+
+        /*PassengerRepositoryImpl repository = new PassengerRepositoryImpl();
+        repository.*/
+
     }
     @RequestMapping("/userLogin")
     public String userLogin(@ModelAttribute("passenger") Passenger passenger){
